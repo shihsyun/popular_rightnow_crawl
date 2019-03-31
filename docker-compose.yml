@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  scrapy:
+    container_name: scrapy
+    image: scrapy 
+    networks: 
+      - scrapy_network
+      - mongodb_network
+
+  splash:
+    container_name: splash
+    image: scrapinghub/splash    
+    depends_on: 
+      - scrapy    
+    networks: 
+      - scrapy_network
+    ports: 
+      - '8050:8050'
+
+  mongodb:
+    container_name: mongo
+    image: mongo    
+    depends_on: 
+      - scrapy    
+    volumes: 
+      - mongo_data:/data/db
+    networks: 
+      - mongodb_network
+    ports: 
+      - '27017:27017'
+
+  django:
+    container_name: django
+    image: etsy_django 
+    depends_on: 
+      - mongodb    
+    networks: 
+      - mongodb_network
+      - memcached_network
+      - nginx_network
+    ports: 
+      - '8000:8000'
+
+  memcached:
+    container_name: memcached
+    image: memcached
+    depends_on: 
+      - django    
+    networks: 
+      - memcached_network
+    ports: 
+      - '11211:11211'
+
+  nginx:
+    container_name: nginx
+    image: etsy_nginx
+    depends_on: 
+      - django    
+    networks: 
+      - nginx_network
+    ports: 
+      - '80:80'
+
+      
+volumes: 
+  mongo_data:
+
+networks: 
+  scrapy_network:
+    driver: bridge
+  mongodb_network:
+    driver: bridge
+  memcached_network:
+    driver: bridge
+  nginx_network:
+    driver: bridge
+

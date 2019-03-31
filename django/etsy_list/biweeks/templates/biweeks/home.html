@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Etsy Popular right now</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  {% include 'base.html' %}
+</head>
+
+<body>
+
+  <main role="main">
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-3">Popular Right Now</h1>
+        <p>這是一個計算與統計Etsy電商網站，兩週內的熱門商品的資料網頁。</p>
+      </div>
+    </div>
+  </main>
+
+  <section class=.bg-light>
+    <div class="container">
+      <div class="row">
+        {% for result in results %}
+        <div class="col">
+          <div class="card border-light p-3 mb-5 shadow " style="max-width: 20rem;">
+            <a href={{ result.url}} target="_blank">
+              <img class="card-img-top" src={{ result.image_url}} class="rounded">
+            </a>
+            <div class="card-body text-dark">
+              <h6 class="card-title">{{ result.name }}
+              </h6>
+            </div>
+            <p class="card-text text-muted">
+              <p align="right"><B>Shop:</B>
+                <span class="nbsp"></span>
+                <a href={{result.shop_url}} class="text-secondary" target="_blank">
+                  <U>{{result.shop_name}}</U>
+                </a>
+                <span class="nbsp"></span>
+                <I>${{ result.price }}</I>
+              </p>
+            </p>
+          </div>
+        </div>
+        {%endfor%}
+      </div>
+  </section>
+
+  {% if results.has_other_pages %}
+  <nav aria-label="page_navigation_bar">
+    <ul class="pagination justify-content-center">
+      {% if results.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ results.previous_page_number }}">Previous</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link disabled" href="#"> Previous</a></li>
+      {% endif %}
+      {% for i in results.paginator.page_range %}
+      {% if results.number == i %}
+      <li class="page-item active">
+        <p class="page-link disabled">{{ i }}</p>
+      </li>
+      {% else %}
+      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+      {% endfor %}
+      {% if results.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ results.next_page_number }}">Next</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link disabled" href="#"> Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+</body>
+
+</html>
